@@ -1,8 +1,8 @@
-name:                elm-export
+name:                purescript-export
 version:             0.5.0.2
-synopsis:            A library to generate Elm types from Haskell source.
-description:         Generate Elm source code automatically from Haskell types. Using GHC.Generics, we can automatically derive Elm type declarations, and Aeson-compatible JSON decoders & encoders.
-homepage:            http://github.com/krisajenkins/elm-export
+synopsis:            A library to generate PureScript types from Haskell source.
+description:         Generate PureScript source code automatically from Haskell types. Using GHC.Generics, we can automatically derive PureScript type declarations, and Aeson-compatible JSON decoders & encoders.
+homepage:            http://github.com/krisajenkins/purescript-export
 stability:           alpha
 license:             OtherLicense
 license-file:        LICENSE.txt
@@ -11,12 +11,12 @@ maintainer:          kris.jenkins@clearercode.com
 copyright:           2015-2016 Kris Jenkins
 category:            Web
 build-type:          Simple
-extra-source-files:  test/*.elm
+extra-source-files:  test/*.purs
 cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Elm
+  exposed-modules:     PureScript
   build-depends:       base >= 4.7 && < 5
                      , bytestring
                      , containers
@@ -27,14 +27,14 @@ library
                      , time
   default-language:    Haskell2010
   ghc-options:         -Wall
-  other-modules: Elm.Type
-               , Elm.Common
-               , Elm.Decoder
-               , Elm.Encoder
-               , Elm.File
-               , Elm.Record
+  other-modules: PureScript.Type
+               , PureScript.Common
+               , PureScript.Decoder
+               , PureScript.Encoder
+               , PureScript.File
+               , PureScript.Record
 
-test-suite elm-export-test
+test-suite purescript-export-test
   type:                exitcode-stdio-1.0
   hs-source-dirs:      test
   main-is:             Spec.hs
@@ -44,7 +44,7 @@ test-suite elm-export-test
                      , base
                      , bytestring
                      , containers
-                     , elm-export
+                     , purescript-export
                      , hspec
                      , hspec-core
                      , quickcheck-instances
@@ -55,4 +55,4 @@ test-suite elm-export-test
 
 source-repository head
   type:     git
-  location: https://github.com/krisajenkins/elm-export
+  location: https://github.com/parsonsmatt/purescript-export

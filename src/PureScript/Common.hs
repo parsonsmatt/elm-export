@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Elm.Common  where
+module PureScript.Common  where
 
 import           Data.Text  (Text)
 import           Formatting

@@ -1,18 +1,18 @@
-# Elm Export
+# PureScript Export
 
-[![Build Status](https://travis-ci.org/krisajenkins/elm-export.svg)](https://travis-ci.org/krisajenkins/elm-export)
+[![Build Status](https://travis-ci.org/parsonsmatt/purescript-export.svg)](https://travis-ci.org/parsonsmatt/purescript-export)
 
-Create Elm classes and JSON decoders from Haskell DataTypes.
+Create PureScript classes and JSON decoders from Haskell DataTypes.
 
 ## Installation
 
-Elm Export is [available on Hackage](http://hackage.haskell.org/package/elm-export).
+PureScript Export is [available on Hackage](http://hackage.haskell.org/package/purescript-export).
 
 ## Usage
 
 To use this library, you must first make the types you want to export
-implement `ElmType`. This is easy. Just derive `Generic`, and then
-we can automatically generate the `ElmType` instance for you. Here's
+implement `PureScriptType`. This is easy. Just derive `Generic`, and then
+we can automatically generate the `PureScriptType` instance for you. Here's
 an example with a `Person` type:
 
 ```haskell
@@ -21,41 +21,41 @@ an example with a `Person` type:
 module Db where
 
 import GHC.Generics
-import Elm
+import PureScript
 
 data Person =
   Person {id   :: Int
          ,name :: Maybe String}
-  deriving (Show,Eq,Generic,ElmType)
+  deriving (Show,Eq,Generic,PureScriptType)
 ```
 
 That's it for the type. Now you'll want to write a main that generates
-the Elm source code:
+the PureScript source code:
 
 ```haskell
 module Main where
 
 import Db
-import Elm
+import PureScript
 import Data.Proxy
 
 spec :: Spec
 spec = Spec ["Db", "Types"]
             ["import Json.Decode exposing (..)"
             ,"import Json.Decode.Extra exposing (apply,date)"
-            ,toElmTypeSource (Proxy :: Proxy Person)
-            ,toElmDecoderSource (Proxy :: Proxy Person)]
+            ,toPureScriptTypeSource (Proxy :: Proxy Person)
+            ,toPureScriptDecoderSource (Proxy :: Proxy Person)]
 
 main :: IO ()
 main = specsToDir [spec] "some/where/output"
 ```
 
 Run this and the directory `some/where/output` will be created, and
-under that the Elm source file `Db/Types.elm` will be found.
+under that the PureScript source file `Db/Types.purescript` will be found.
 
-All the hard work here is done by `toElmTypeSource` and
-`toElmDecoderSource`. The `Spec` code is just wrapping to make it easy
-to create a complete Elm file from the meat that `ElmType` gives
+All the hard work here is done by `toPureScriptTypeSource` and
+`toPureScriptDecoderSource`. The `Spec` code is just wrapping to make it easy
+to create a complete PureScript file from the meat that `PureScriptType` gives
 you.
 
 ## Development
@@ -77,7 +77,7 @@ stack test --file-watch
 ## Change Log
 
 ### V0.3.0.0
-* Renamed `ToElmType` to `ElmType`, for brevity.
+* Renamed `ToPureScriptType` to `PureScriptType`, for brevity.
 
 ### V0.2.0.0
 * Added Encoders (thanks to [Matthew Bray](https://github.com/mattjbray))
@@ -91,8 +91,8 @@ Alpha. The author is using it in production, but it is not yet
 expected to work for every reasonable case.
 
 There are some Haskell datatypes that cannot be represented in
-Elm. Obviously we will not support those. But there are some which are
-legal Haskell and legal Elm, but we do not yet generate. Please send
+PureScript. Obviously we will not support those. But there are some which are
+legal Haskell and legal PureScript, but we do not yet generate. Please send
 examples, PRs and code-suggestions!
 
 ## Contributors
@@ -107,6 +107,6 @@ Distributed under the Eclipse Public License.
 
 ## See Also
 
-[Elm Bridge](https://hackage.haskell.org/package/elm-bridge) is a
+[PureScript Bridge](https://hackage.haskell.org/package/purescript-bridge) is a
 different implementation of the same goal. That project uses Template
 Haskell, this one uses GHC Generics.

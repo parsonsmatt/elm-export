@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Elm.File
+module PureScript.File
   ( Spec(..)
   , specsToDir
   ) where

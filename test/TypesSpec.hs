@@ -3,14 +3,14 @@
 
 module TypesSpec where
 
-import Elm
+import PureScript
 import GHC.Generics
 import           Test.Hspec   as Hspec
 
--- All the types in this file should be Elm-encodable.
+-- All the types in this file should be PureScript-encodable.
 data Person = Person
     { personName :: String
-    } deriving (Generic, ElmType)
+    } deriving (Generic, PureScriptType)
 
 spec :: Hspec.Spec
 spec = return ()

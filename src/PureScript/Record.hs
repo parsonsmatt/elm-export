@@ -1,15 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Elm.Record
-  ( toElmTypeRef
-  , toElmTypeRefWith
-  , toElmTypeSource
-  , toElmTypeSourceWith
+module PureScript.Record
+  ( toPureScriptTypeRef
+  , toPureScriptTypeRefWith
+  , toPureScriptTypeSource
+  , toPureScriptTypeSourceWith
   ) where
 
 import           Control.Monad.Reader
 import           Data.Text
-import           Elm.Common
-import           Elm.Type
+import           PureScript.Common
+import           PureScript.Type
 import           Formatting
 
 class HasType a where
@@ -18,24 +18,24 @@ class HasType a where
 class HasTypeRef a where
   renderRef :: a -> Reader Options Text
 
-instance HasType ElmDatatype where
-    render d@(ElmDatatype _ constructor@(RecordConstructor _ _)) =
+instance HasType PureScriptDatatype where
+    render d@(PureScriptDatatype _ constructor@(RecordConstructor _ _)) =
         sformat ("type alias " % stext % " =" % cr % stext) <$> renderRef d <*> render constructor
-    render d@(ElmDatatype _ constructor@(MultipleConstructors _)) =
+    render d@(PureScriptDatatype _ constructor@(MultipleConstructors _)) =
         sformat ("type " % stext % cr % "    = " % stext) <$> renderRef d <*> render constructor
-    render d@(ElmDatatype _ constructor@(NamedConstructor _ _)) =
+    render d@(PureScriptDatatype _ constructor@(NamedConstructor _ _)) =
         sformat ("type " % stext % cr % "    = " % stext) <$> renderRef d <*> render constructor
-    render (ElmPrimitive primitive) = renderRef primitive
+    render (PureScriptPrimitive primitive) = renderRef primitive
 
-instance HasTypeRef ElmDatatype where
-    renderRef (ElmDatatype typeName _) =
+instance HasTypeRef PureScriptDatatype where
+    renderRef (PureScriptDatatype typeName _) =
         pure typeName
 
-    renderRef (ElmPrimitive primitive) =
+    renderRef (PureScriptPrimitive primitive) =
         renderRef primitive
 
 
-instance HasType ElmConstructor where
+instance HasType PureScriptConstructor where
     render (RecordConstructor _ value) =
         sformat ("    { " % stext % cr % "    }") <$> render value
     render (NamedConstructor constructorName value) =
@@ -44,19 +44,19 @@ instance HasType ElmConstructor where
         fmap (Data.Text.intercalate "\n    | ") . sequence $ render <$> constructors
 
 
-instance HasType ElmValue where
-    render (ElmRef name) = pure name
-    render ElmEmpty = pure ""
+instance HasType PureScriptValue where
+    render (PureScriptRef name) = pure name
+    render PureScriptEmpty = pure ""
     render (Values x y) =
         sformat (stext % cr % "    , " % stext) <$> render x <*> render y
-    render (ElmPrimitiveRef primitive) = sformat (" " % stext) <$> renderRef primitive
-    render (ElmField name value) = do
+    render (PureScriptPrimitiveRef primitive) = sformat (" " % stext) <$> renderRef primitive
+    render (PureScriptField name value) = do
         fieldModifier <- asks fieldLabelModifier
         sformat (stext % " :" % stext) (fieldModifier name) <$> render value
 
 
-instance HasTypeRef ElmPrimitive where
-    renderRef (EList (ElmPrimitive EChar)) = renderRef EString
+instance HasTypeRef PureScriptPrimitive where
+    renderRef (EList (PureScriptPrimitive EChar)) = renderRef EString
     renderRef (EList datatype) = sformat ("List (" % stext % ")") <$> renderRef datatype
     renderRef (ETuple2 x y) =
         sformat ("( " % stext % ", " % stext % " )") <$> renderRef x <*> renderRef y
@@ -72,14 +72,14 @@ instance HasTypeRef ElmPrimitive where
     renderRef EUnit = pure "()"
     renderRef EFloat = pure "Float"
 
-toElmTypeRefWith :: ElmType a => Options -> a -> Text
-toElmTypeRefWith options x = runReader (renderRef (toElmType x)) options
+toPureScriptTypeRefWith :: PureScriptType a => Options -> a -> Text
+toPureScriptTypeRefWith options x = runReader (renderRef (toPureScriptType x)) options
 
-toElmTypeRef :: ElmType a => a -> Text
-toElmTypeRef = toElmTypeRefWith defaultOptions
+toPureScriptTypeRef :: PureScriptType a => a -> Text
+toPureScriptTypeRef = toPureScriptTypeRefWith defaultOptions
 
-toElmTypeSourceWith :: ElmType a => Options -> a -> Text
-toElmTypeSourceWith options x = runReader (render (toElmType x)) options
+toPureScriptTypeSourceWith :: PureScriptType a => Options -> a -> Text
+toPureScriptTypeSourceWith options x = runReader (render (toPureScriptType x)) options
 
-toElmTypeSource :: ElmType a => a -> Text
-toElmTypeSource = toElmTypeSourceWith defaultOptions
+toPureScriptTypeSource :: PureScriptType a => a -> Text
+toPureScriptTypeSource = toPureScriptTypeSourceWith defaultOptions

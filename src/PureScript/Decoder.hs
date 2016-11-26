@@ -4,17 +4,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators     #-}
 
-module Elm.Decoder
-  ( toElmDecoderRef
-  , toElmDecoderRefWith
-  , toElmDecoderSource
-  , toElmDecoderSourceWith
+module PureScript.Decoder
+  ( toPureScriptDecoderRef
+  , toPureScriptDecoderRefWith
+  , toPureScriptDecoderSource
+  , toPureScriptDecoderSourceWith
   ) where
 
 import           Control.Monad.Reader
 import           Data.Text
-import           Elm.Common
-import           Elm.Type
+import           PureScript.Common
+import           PureScript.Type
 import           Formatting
 
 class HasDecoder a where
@@ -23,8 +23,8 @@ class HasDecoder a where
 class HasDecoderRef a where
   renderRef :: a -> Reader Options Text
 
-instance HasDecoder ElmDatatype where
-    render d@(ElmDatatype name constructor) = do
+instance HasDecoder PureScriptDatatype where
+    render d@(PureScriptDatatype name constructor) = do
         fnName <- renderRef d
         sformat
             (stext % " : Decoder " % stext % cr % stext % " =" % cr % stext)
@@ -32,28 +32,28 @@ instance HasDecoder ElmDatatype where
             name
             fnName <$>
             render constructor
-    render (ElmPrimitive primitive) = renderRef primitive
+    render (PureScriptPrimitive primitive) = renderRef primitive
 
-instance HasDecoderRef ElmDatatype where
-    renderRef (ElmDatatype name _) =
+instance HasDecoderRef PureScriptDatatype where
+    renderRef (PureScriptDatatype name _) =
         pure $ sformat ("decode" % stext) name
 
-    renderRef (ElmPrimitive primitive) =
+    renderRef (PureScriptPrimitive primitive) =
         renderRef primitive
 
 
-instance HasDecoder ElmConstructor where
+instance HasDecoder PureScriptConstructor where
     render (NamedConstructor name value) =
         sformat ("    decode " % stext % cr % stext) name <$> render value
     render (RecordConstructor name value) =
         sformat ("    decode " % stext % cr % stext) name <$> render value
 
 
-instance HasDecoder ElmValue where
-    render (ElmRef name) = pure (sformat ("decode" % stext) name)
-    render (ElmPrimitiveRef primitive) = renderRef primitive
+instance HasDecoder PureScriptValue where
+    render (PureScriptRef name) = pure (sformat ("decode" % stext) name)
+    render (PureScriptPrimitiveRef primitive) = renderRef primitive
     render (Values x y) = sformat (stext % cr % stext) <$> render x <*> render y
-    render (ElmField name value) = do
+    render (PureScriptField name value) = do
         fieldModifier <- asks fieldLabelModifier
         sformat
             ("        |> required \"" % stext % "\" " % stext)
@@ -61,13 +61,13 @@ instance HasDecoder ElmValue where
             render value
 
 
-instance HasDecoderRef ElmPrimitive where
-    renderRef (EList (ElmPrimitive EChar)) = pure "string"
+instance HasDecoderRef PureScriptPrimitive where
+    renderRef (EList (PureScriptPrimitive EChar)) = pure "string"
     renderRef (EList datatype) =
         sformat ("(list " % stext % ")") <$> renderRef datatype
     renderRef (EDict key value) =
         sformat ("(map Dict.fromList " % stext % ")") <$>
-        renderRef (EList (ElmPrimitive (ETuple2 (ElmPrimitive key) value)))
+        renderRef (EList (PureScriptPrimitive (ETuple2 (PureScriptPrimitive key) value)))
     renderRef (EMaybe datatype) =
         sformat ("(maybe " % stext % ")") <$> renderRef datatype
     renderRef (ETuple2 x y) =
@@ -82,17 +82,17 @@ instance HasDecoderRef ElmPrimitive where
     renderRef EString = pure "string"
 
 
-toElmDecoderRefWith :: ElmType a => Options -> a -> Text
-toElmDecoderRefWith options x = runReader (renderRef (toElmType x)) options
+toPureScriptDecoderRefWith :: PureScriptType a => Options -> a -> Text
+toPureScriptDecoderRefWith options x = runReader (renderRef (toPureScriptType x)) options
 
 
-toElmDecoderRef :: ElmType a => a -> Text
-toElmDecoderRef = toElmDecoderRefWith defaultOptions
+toPureScriptDecoderRef :: PureScriptType a => a -> Text
+toPureScriptDecoderRef = toPureScriptDecoderRefWith defaultOptions
 
 
-toElmDecoderSourceWith :: ElmType a => Options -> a -> Text
-toElmDecoderSourceWith options x = runReader (render (toElmType x)) options
+toPureScriptDecoderSourceWith :: PureScriptType a => Options -> a -> Text
+toPureScriptDecoderSourceWith options x = runReader (render (toPureScriptType x)) options
 
 
-toElmDecoderSource :: ElmType a => a -> Text
-toElmDecoderSource = toElmDecoderSourceWith defaultOptions
+toPureScriptDecoderSource :: PureScriptType a => a -> Text
+toPureScriptDecoderSource = toPureScriptDecoderSourceWith defaultOptions
