@@ -4,6 +4,8 @@
 
 Create PureScript classes and JSON decoders from Haskell DataTypes.
 
+Inspired by (and mostly copied from) Kris Jenkins' excellent `elm-export` library.
+
 ## Installation
 
 PureScript Export is [available on Hackage](http://hackage.haskell.org/package/purescript-export).
